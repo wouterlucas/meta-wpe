@@ -1,10 +1,11 @@
 # Copyright (C) 2016 Khem Raj <raj.khem@gmail.com>
 # Released under the MIT license (see COPYING.MIT for the terms)
 
-DESCRIPTION = "WPE rootfs image"
+DESCRIPTION = "WPE base image"
 LICENSE = "MIT"
 
-include recipes-core/images/rpi-basic-image.bb
+include recipes-core/images/core-image-minimal.bb
+
 require wpe-image.inc
 
 IMAGE_FEATURES += " \
@@ -15,4 +16,5 @@ IMAGE_FEATURES += " \
 
 IMAGE_INSTALL += " \
 	kernel-modules \
+	xkeyboard-config \
 "
