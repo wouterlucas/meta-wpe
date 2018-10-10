@@ -14,18 +14,19 @@ DEPENDS += " \
     virtual/egl virtual/libgles2 \
 "
 
-PV = "20170728+git${SRCPV}"
+PV = "2.20+git${SRCPV}"
 
 # setup ccache-native
 CCACHE = "${STAGING_DIR_NATIVE}${bindir}/ccache "
-#CCACHE_DISABLE = "False"
-#OECMAKE_CCACHE="-DCMAKE_C_COMPILER_LAUNCHER=${CCACHE} -DCMAKE_CXX_COMPILER_LAUNCHER=${CCACHE}"
 
-SRCREV ?= "a29e1d6634243341168923b035b6accc1a8ebe5f"
-BASE_URI ?= "git://github.com/WebPlatformForEmbedded/WPEWebKit.git;protocol=git;branch=wpe-20170728"
-SRC_URI = "${BASE_URI}"
-SRC_URI += "file://0001-Fix-build-with-musl.patch"
-SRC_URI += "file://0002-Define-MESA_EGL_NO_X11_HEADERS-when-not-using-GLX.patch"
+SRCREV ?= "dde0b5b93fc434ee2ec6375d16815e270a5c9834"
+BASE_URI ?= "git://github.com/WebPlatformForEmbedded/WPEWebKit.git"
+SRC_URI = "${BASE_URI} \
+           file://0001-Define-MESA_EGL_NO_X11_HEADERS-when-not-using-GLX.patch \
+           file://0001-Fix-build-with-musl.patch \
+           file://0002-include-GraphicsContext3D.h-for-DONT_CARE-definition.patch \
+           file://0003-Improve-checking-if-libatomic-is-needed-for-armv6-pr.patch \
+           "
 
 S = "${WORKDIR}/git"
 
@@ -61,7 +62,6 @@ PACKAGECONFIG[geolocation] = "-DENABLE_GEOLOCATION=ON,-DENABLE_GEOLOCATION=OFF,g
 PACKAGECONFIG[indexeddb] = "-DENABLE_INDEXED_DATABASE=ON,-DENABLE_INDEXED_DATABASE=OFF,"
 PACKAGECONFIG[logs] = "-DLOG_DISABLED=OFF,-DLOG_DISABLED=ON,"
 PACKAGECONFIG[mediasource] = "-DENABLE_MEDIA_SOURCE=ON,-DENABLE_MEDIA_SOURCE=OFF,gstreamer1.0 gstreamer1.0-plugins-good,${RDEPS_MEDIASOURCE}"
-PACKAGECONFIG[mediastream] = "-DENABLE_MEDIA_STREAM=ON,-DENABLE_MEDIA_STREAM=OFF,openwebrtc"
 PACKAGECONFIG[mediastatistics] = "-DENABLE_MEDIA_STATISTICS=ON,-DENABLE_MEDIA_STATISTICS=OFF,"
 PACKAGECONFIG[nativeaudio] = "-DENABLE_NATIVE_AUDIO=ON,-DENABLE_NATIVE_AUDIO=OFF,"
 PACKAGECONFIG[nativevideo] = "-DENABLE_NATIVE_VIDEO=ON,-DENABLE_NATIVE_VIDEO=OFF,"
@@ -102,34 +102,14 @@ ARM_INSTRUCTION_SET_armv7r = "thumb"
 ARM_INSTRUCTION_SET_armv7m = "thumb"
 ARM_INSTRUCTION_SET_armv7ve = "thumb"
 
+# JSC JIT doesn't currently compile on ARMv6, disable it.
+EXTRA_OECMAKE_append_armv6 = " -DENABLE_JIT=OFF"
+
 do_compile() {
     ${STAGING_BINDIR_NATIVE}/ninja ${PARALLEL_MAKE} -C ${B} libWPEWebKit.so libWPEWebInspectorResources.so WPEWebProcess WPENetworkProcess WPEStorageProcess WPEWebDriver
 }
 
 do_compile[progress] = "outof:^\[(\d+)/(\d+)\]\s+"
-
-do_install() {
-    DESTDIR=${D} cmake -DCOMPONENT=Development -P ${B}/Source/WebKit/cmake_install.cmake
-    DESTDIR=${D} cmake -DCOMPONENT=Development -P ${B}/Source/JavaScriptCore/cmake_install.cmake
-
-    install -d ${D}${libdir}
-    cp -av --no-preserve=ownership ${B}/lib/libWPE* ${D}${libdir}/
-    install -m 0755 ${B}/lib/libWPEWebInspectorResources.so ${D}${libdir}/
-    # Hack: Remove the RPATH embedded in libWPEWebKit.so
-    chrpath --delete ${D}${libdir}/libWPE*
-
-    install -d ${D}${bindir}
-    install -m755 ${B}/bin/WPEWebProcess ${D}${bindir}/
-    install -m755 ${B}/bin/WPENetworkProcess ${D}${bindir}/
-    install -m755 ${B}/bin/WPEStorageProcess ${D}${bindir}/
-    install -m755 ${B}/bin/WPEWebDriver ${D}${bindir}/
-
-    # Hack: Remove RPATHs embedded in apps
-    chrpath --delete ${D}${bindir}/WPEWebProcess
-    chrpath --delete ${D}${bindir}/WPENetworkProcess
-    chrpath --delete ${D}${bindir}/WPEStorageProcess
-    chrpath --delete ${D}${bindir}/WPEWebDriver
-}
 
 LEAD_SONAME = "libWPEWebKit.so"
 
@@ -171,23 +151,21 @@ RDEPS_EXTRA = " \
     gstreamer1.0-plugins-good-autodetect \
     gstreamer1.0-plugins-good-avi \
     gstreamer1.0-plugins-good-deinterlace \
-    gstreamer1.0-plugins-good-id3demux \
-    gstreamer1.0-plugins-good-icydemux \
     gstreamer1.0-plugins-good-interleave \
     gstreamer1.0-plugins-good-matroska \
+    gstreamer1.0-plugins-good-mpg123 \
     gstreamer1.0-plugins-bad-dashdemux \
     gstreamer1.0-plugins-bad-hls \
-    gstreamer1.0-plugins-bad-faad \
     gstreamer1.0-plugins-bad-mpegtsdemux \
     gstreamer1.0-plugins-bad-opusparse \
     gstreamer1.0-plugins-bad-smoothstreaming \
     gstreamer1.0-plugins-bad-videoparsersbad \
-    gstreamer1.0-plugins-ugly-mpg123 \
 "
 
 RDEPS_EXTRA_append_rpi = " \
     gstreamer1.0-omx \
-    gstreamer1.0-plugins-bad-opengl \
+    gstreamer1.0-plugins-bad-faad \
+    gstreamer1.0-plugins-base-opengl \
 "
 
 # The RDEPS_EXTRA plugins are all required for certain media playback use cases,
