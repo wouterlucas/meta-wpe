@@ -1,0 +1,13 @@
+diff --git a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+index 55b4582..4b9dd19 100644
+--- a/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
++++ b/Source/WebCore/platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp
+@@ -364,7 +364,7 @@ MediaTime MediaPlayerPrivateGStreamer::playbackPosition() const
+     double now = WTF::currentTime();
+     // This cachedPosition time-to-live should be slightly lower than the maxTimeupdateEventFrequency
+     // in HTMLMediaElement to prevent returning the same cached value in two consecutive updates.
+-    if (m_lastQuery > -1 && ((now - m_lastQuery) < 0.175) && m_cachedPosition.isValid())
++    if (m_lastQuery > -1 && ((now - m_lastQuery) < 0.01) && m_cachedPosition.isValid())
+         return m_cachedPosition;
+ 
+     m_lastQuery = now;
