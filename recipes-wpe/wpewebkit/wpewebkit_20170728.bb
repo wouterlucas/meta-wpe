@@ -9,12 +9,12 @@ SRC_URI += "file://0001-Fix-build-with-musl.patch"
 SRC_URI += "file://0002-Define-MESA_EGL_NO_X11_HEADERS-when-not-using-GLX.patch"
 
 # needed for youtube certification
-SRC_URI += "file://0003-MSE2018_MSE_Conformance_Test_55_DelayedAACAudio.patch
-SRC_URI += "file://0005-YT_Seek_To_Buffered_Position_Fix_For_BRCM.patch
-SRC_URI += "file://0006-brcm-force-sink-av-factories.patch
-SRC_URI += "file://0006-brcm_frame_decoded.patch
-SRC_URI += "file://0007-brcm_frame_dropped.patch
-SRC_URI += "file://0011-change-position-query-frequency-10ms.patch
+SRC_URI += "file://0003-MSE2018_MSE_Conformance_Test_55_DelayedAACAudio.patch"
+SRC_URI += "file://0005-YT_Seek_To_Buffered_Position_Fix_For_BRCM.patch"
+SRC_URI += "file://0006-brcm-force-sink-av-factories.patch"
+SRC_URI += "file://0006-brcm_frame_decoded.patch"
+SRC_URI += "file://0007-brcm_frame_dropped.patch"
+SRC_URI += "file://0011-change-position-query-frequency-10ms.patch"
 
 do_compile() {
     ${STAGING_BINDIR_NATIVE}/ninja ${PARALLEL_MAKE} -C ${B} libWPEWebKit.so libWPEWebInspectorResources.so WPEWebProcess WPENetworkProcess WPEStorageProcess WPEWebDriver
