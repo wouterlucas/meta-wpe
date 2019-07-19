@@ -31,7 +31,7 @@ STREAMER_EXTRA_FLAGS += "${@bb.utils.contains('STREAMER_IMPLEMENTATIONS', 'QAM',
 
 
 # Set dependencies
-STREAMER_DEP ?= "${@bb.utils.contains('STREAMER_IMPLEMENTATIONS', 'Aamp', 'gstreamer1.0-plugins-aamp', '', d)}"
+STREAMER_DEP ?= "${@bb.utils.contains('STREAMER_IMPLEMENTATIONS', 'Aamp', 'gst-plugins-rdk-aamp', '', d)}"
 
 # Other options include:
 # -DPLUGIN_STREAMER_BROADCAST_SATELLITE=ON
@@ -39,6 +39,3 @@ STREAMER_DEP ?= "${@bb.utils.contains('STREAMER_IMPLEMENTATIONS', 'Aamp', 'gstre
 # Which are not yet supported by this recipe. Please see: https://github.com/WebPlatformForEmbedded/WPEFrameworkPlugins/blob/master/Streamer/CMakeLists.txt for more info
 
 PACKAGECONFIG[streamer] = "-DPLUGIN_STREAMER=ON -DPLUGIN_STREAMER_IMPLEMENTATIONS=${STREAMER_IMPLEMENTATIONS} ${STREAMER_EXTRA_FLAGS},,${STREAMER_DEP}"
-
-# FIXME, streamer plugin makes a dep on aamp-dev
-#INSANE_SKIP_${PN} += "dev-deps"
