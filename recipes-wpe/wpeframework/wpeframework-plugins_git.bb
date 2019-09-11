@@ -48,7 +48,7 @@ PACKAGECONFIG ?= " \
     ${@bb.utils.contains('DISTRO_FEATURES', 'widevine',             'opencdmi_wv', '', d)} \
     ${@bb.utils.contains('DISTRO_FEATURES', 'thunder',              'network', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'wifi',                'network wifi', '', d)} \
-    deviceinfo dictionary locationsync monitor remote remote-devinput spark timesync tracing ux virtualinput webkitbrowser webserver youtube \
+    deviceinfo dictionary locationsync messenger monitor remote remote-devinput spark timesync tracing ux virtualinput webkitbrowser webserver youtube \
 "
 
 PACKAGECONFIG[bluetooth]      = "-DPLUGIN_BLUETOOTH=ON -DPLUGIN_BLUETOOTH_AUTOSTART=false,-DPLUGIN_BLUETOOTH=OFF,,dbus-glib bluez5"
@@ -60,6 +60,7 @@ PACKAGECONFIG[locationsync]   = "-DPLUGIN_LOCATIONSYNC=ON \
                                  -DPLUGIN_LOCATIONSYNC_URI=${WPEFRAMEWORK_LOCATIONSYNC_URI} \
                                 ,-DPLUGIN_LOCATIONSYNC=OFF,"
 PACKAGECONFIG[network]        = "-DPLUGIN_NETWORKCONTROL=ON,-DPLUGIN_NETWORKCONTROL=OFF,"
+PACKAGECONFIG[messenger]      = "-DPLUGIN_MESSENGER=ON,-DPLUGIN_MESSENGER=OFF,"
 PACKAGECONFIG[monitor]        = "-DPLUGIN_MONITOR=ON \
                                  -DPLUGIN_WEBKITBROWSER_MEMORYLIMIT=614400 \
                                  -DPLUGIN_YOUTUBE_MEMORYLIMIT=614400 \
